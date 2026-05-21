@@ -1,0 +1,320 @@
+==========================================
+/*      DND5E SYSTEM MATCHED DUEL HUD         */
+/* ========================================== */
+
+.duel-grounds-app {
+    font-family: "Signika", "Palatino Linotype", serif;
+    color: #191813;
+    padding: 5px;
+}
+
+/* Scoreboard Header (Parchment Card Style) */
+.duel-scoreboard {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #fbf7ee url(../../../systems/dnd5e/ui/parchment.jpg) repeat;
+    border: 1px solid #c9b187;
+    box-shadow: 0 0 4px rgba(0, 0, 0, 0.15);
+    border-radius: 5px;
+    padding: 12px 8px;
+    margin-bottom: 15px;
+    position: relative;
+}
+
+/* Symmetrical VS Divider Medallion */
+.vs-badge {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    background: #e0d0b0;
+    color: #4b4a44;
+    font-family: "Modesto Condensed", "Palatino Linotype", serif;
+    font-size: 1.4em;
+    font-weight: bold;
+    padding: 4px 8px;
+    border-radius: 4px;
+    border: 1px solid #7a7973;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    z-index: 2;
+}
+
+/* Combatant Column Cards */
+.combatant-card {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 8px;
+    background: rgba(0, 0, 0, 0.03);
+    border: 1px solid transparent;
+    border-radius: 3px;
+    transition: all 0.2s ease-in-out;
+}
+
+.attacker-card { margin-right: 22px; }
+.defender-card { margin-left: 22px; }
+
+/* Active Participant Highlight (Matches dnd5e inventory focus) */
+.combatant-card.is-me {
+    border-color: #c9b187;
+    background: rgba(224, 208, 176, 0.25);
+    box-shadow: 0 0 5px rgba(199, 177, 135, 0.5);
+}
+
+.identity {
+    font-family: "Modesto Condensed", "Palatino Linotype", serif;
+    font-size: 1.5em;
+    color: #4b4a44;
+    font-weight: bold;
+    margin-bottom: 4px;
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 100%;
+}
+
+.you-badge {
+    font-size: 0.7em;
+    color: #7a2021;
+    vertical-align: middle;
+    margin-left: 2px;
+}
+
+/* Score Indicators */
+.metrics { margin-bottom: 6px; }
+
+.score-pill {
+    background: #e3d7c1;
+    color: #191813;
+    border: 1px solid #b5a385;
+    padding: 2px 8px;
+    border-radius: 3px;
+    font-size: 0.85em;
+    font-weight: bold;
+}
+
+/* HP Pill matches the traditional 5e health bar coloring */
+.score-pill.hp-pill {
+    background: #8c2123;
+    color: #fbf7ee;
+    border: 1px solid #5c1214;
+}
+
+.status-indicator {
+    font-size: 0.85em;
+    font-weight: normal;
+}
+
+.ready-text {
+    color: #275927;
+    font-weight: bold;
+}
+
+.waiting-text {
+    color: #66645e;
+    font-style: italic;
+}
+
+/* Symmetrical Layout Lines */
+.fancy-divider {
+    border: 0;
+    height: 1px;
+    background: linear-gradient(to right, transparent, #c9b187, transparent);
+    margin: 15px 0;
+}
+
+/* Windows Action Section */
+.phase-title {
+    font-family: "Modesto Condensed", "Palatino Linotype", serif;
+    font-size: 1.8em;
+    color: #7a2021;
+    text-align: center;
+    border-bottom: 1px solid #c9b187;
+    padding-bottom: 3px;
+    margin-bottom: 12px;
+}
+
+.spectator-notice {
+    text-align: center;
+    font-style: italic;
+    color: #66645e;
+    padding: 15px;
+    background: rgba(0, 0, 0, 0.02);
+    border: 1px dashed #c9b187;
+    border-radius: 4px;
+}
+
+/* Standardized Button styling mapping to dnd5e button sheet classes */
+.action-btn {
+    width: 100%;
+    font-family: "Signika", sans-serif;
+    padding: 6px;
+    margin-top: 8px;
+    background: #e0d0b0;
+    border: 1px solid #7a7973;
+    color: #191813;
+    border-radius: 3px;
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+}
+
+.action-btn:hover {
+    background: #eddcb9;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+}
+
+.action-btn.gm-btn {
+    background: #dfeedf;
+    border-color: #719e71;
+    color: #1c421c;
+}
+.action-btn.gm-btn:hover { background: #ecf7ec; }
+
+.action-btn.danger-btn {
+    background: #f1dbdb;
+    border-color: #b97d7d;
+    color: #612121;
+}
+.action-btn.danger-btn:hover { background: #faeded; }
+
+/* Stance Layout Configuration Options */
+.stance-grid { display: flex; gap: 8px; justify-content: space-between; }
+
+.stance-btn {
+    flex: 1;
+    padding: 8px 4px;
+    font-family: "Signika", sans-serif;
+    font-size: 0.9em;
+    font-weight: bold;
+    cursor: pointer;
+    border-radius: 3px;
+    border: 1px solid #b5a385;
+    background: #f1ebd9;
+    color: #4b4a44;
+}
+.stance-btn:hover {
+    background: #fbf7ee;
+    border-color: #7a2021;
+    color: #7a2021;
+}
+
+/* Setup Boxes and Displays */
+.matchup-reveal, .roll-breakdown {
+    text-align: center;
+    background: rgba(0, 0, 0, 0.02);
+    border: 1px solid #e0d0b0;
+    padding: 8px;
+    border-radius: 4px;
+    margin-bottom: 12px;
+}
+
+.matchup-bonus, .total-mod {
+    font-size: 1.1em;
+    color: #7a2021;
+    font-weight: bold;
+    margin-top: 3px;
+}
+
+.penalty { color: #aa2e2e; font-weight: bold; }
+
+/* Counter-Attack Advantage Badge */
+.advantage-badge {
+    background: #fff8e7;
+    color: #856404;
+    padding: 6px;
+    text-align: center;
+    border-radius: 3px;
+    margin-bottom: 8px;
+    border: 1px solid #ffeeba;
+    font-weight: bold;
+    font-size: 0.9em;
+}
+
+/* Standardized Form Input Layouts */
+.flex-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+.flex-row label {
+    font-weight: bold;
+    color: #4b4a44;
+}
+.flex-row select, .flex-row input {
+    flex: 0 0 60%;
+    padding: 4px;
+    border: 1px solid #b5a385;
+    background: #fbf7ee;
+    border-radius: 3px;
+    font-family: inherit;
+}
+
+/* Results Window Elements */
+.results-box {
+    background: #fbf7ee url(../../../systems/dnd5e/ui/parchment.jpg) repeat;
+    border: 1px solid #c9b187;
+    padding: 12px;
+    border-radius: 4px;
+    margin-bottom: 12px;
+    color: #191813;
+    line-height: 1.4;
+}
+
+/* End Victory Display State */
+.victory-screen { text-align: center; padding: 15px; }
+.victory-icon {
+    font-size: 3.5em;
+    color: #c9b187;
+    margin-bottom: 10px;
+    filter: drop-shadow(0 2px 3px rgba(0,0,0,0.15));
+}
+.victory-screen h2 {
+    font-family: "Modesto Condensed", serif;
+    font-size: 2em;
+    color: #7a2021;
+    margin: 5px 0;
+}
+.victory-details {
+    font-style: italic;
+    color: #55534c;
+    margin: 12px 0;
+}
+
+/* ========================================== */
+/* COMBATANT AVATAR FRAMES           */
+/* ========================================== */
+
+.avatar-wrapper {
+    width: 60px;
+    height: 60px;
+    border: 2px solid #b5a385;
+    background: #e0d0b0 url(../../../systems/dnd5e/ui/parchment.jpg) repeat;
+    border-radius: 50%; /* Gives it a clean circular token look */
+    overflow: hidden;
+    margin-bottom: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.25);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.2s ease;
+}
+
+/* Subtle scaling hint on the current client's side card */
+.combatant-card.is-me .avatar-wrapper {
+    border-color: #7a2021;
+    box-shadow: 0 0 6px rgba(122, 32, 33, 0.4);
+    transform: scale(1.05);
+}
+
+.combatant-avatar {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center top;
+    border: none !important; /* Forces removal of core Foundry image framing */
+}

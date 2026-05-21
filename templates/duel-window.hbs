@@ -1,0 +1,201 @@
+<div class="duel-grounds-app">
+    {{!-- PERSISTENT SCOREBOARD --}}
+    <header class="duel-scoreboard">
+        <div class="combatant-card attacker-card {{#if isAttacker}}is-me{{/if}}">
+            <div class="avatar-wrapper">
+                <img class="combatant-avatar" src="{{attackerImg}}" alt="{{attackerName}}">
+            </div>
+
+            <div class="identity">
+                <i class="fas fa-sword"></i> {{attackerName}} {{#if isAttacker}}<span class="you-badge">(You)</span>{{/if}}
+            </div>
+            <div class="metrics">
+                {{#if (eq rules.type "touches")}}
+                    <span class="score-pill">Touches: {{attackerTouches}} / {{rules.target}}</span>
+                {{else}}
+                    <span class="score-pill hp-pill">HP: {{attackerHp}} / {{attackerMaxHp}}</span>
+                {{/if}}
+            </div>
+            <div class="status-indicator">
+                {{#if attackerReady}}
+                    <span class="ready-text"><i class="fas fa-check-circle"></i> Locked In</span>
+                {{else}}
+                    <span class="waiting-text"><i class="fas fa-hourglass-half"></i> Pondering...</span>
+                {{/if}}
+            </div>
+        </div>
+
+        <div class="vs-badge">VS</div>
+
+        <div class="combatant-card defender-card {{#if isDefender}}is-me{{/if}}">
+            <div class="avatar-wrapper">
+                <img class="combatant-avatar" src="{{defenderImg}}" alt="{{defenderName}}">
+            </div>
+
+            <div class="identity">
+                <i class="fas fa-shield-alt"></i> {{defenderName}} {{#if isDefender}}<span class="you-badge">(You)</span>{{/if}}
+            </div>
+            <div class="metrics">
+                {{#if (eq rules.type "touches")}}
+                    <span class="score-pill">Touches: {{defenderTouches}} / {{rules.target}}</span>
+                {{else}}
+                    <span class="score-pill hp-pill">HP: {{defenderHp}} / {{defenderMaxHp}}</span>
+                {{/if}}
+            </div>
+            <div class="status-indicator">
+                {{#if defenderReady}}
+                    <span class="ready-text"><i class="fas fa-check-circle"></i> Locked In</span>
+                {{else}}
+                    <span class="waiting-text"><i class="fas fa-hourglass-half"></i> Pondering...</span>
+                {{/if}}
+            </div>
+        </div>
+    </header>
+
+    <hr class="fancy-divider">
+
+    {{!-- DYNAMIC ARENA ACTION AREA --}}
+    <main class="duel-arena">
+
+        {{!-- PHASE -1: SETUP --}}
+        {{#if (eq phase "setup")}}
+            <h3 class="phase-title">Rules of Engagement</h3>
+            {{#if isGM}}
+                <div class="form-group flex-row">
+                    <label>Condition:</label>
+                    <select id="setup-rule-type">
+                        <option value="touches" {{#if (eq rules.type "touches")}}selected{{/if}}>First to X Touches</option>
+                        <option value="hp" {{#if (eq rules.type "hp")}}selected{{/if}}>Down to HP Threshold</option>
+                    </select>
+                </div>
+
+                {{#if (eq rules.type "touches")}}
+                    <div class="form-group flex-row">
+                        <label>Target:</label>
+                        <input type="number" id="setup-rule-target" value="{{rules.target}}">
+                    </div>
+                {{else}}
+                    <div class="form-group flex-row">
+                        <label>Threshold:</label>
+                        <select id="setup-rule-target-hp">
+                            <option value="0.10" {{#if (eq rules.target 0.10)}}selected{{/if}}>10% of Max HP</option>
+                            <option value="0.25" {{#if (eq rules.target 0.25)}}selected{{/if}}>25% of Max HP</option>
+                            <option value="0.50" {{#if (eq rules.target 0.50)}}selected{{/if}}>50% of Max HP</option>
+                            <option value="0.75" {{#if (eq rules.target 0.75)}}selected{{/if}}>75% of Max HP</option>
+                        </select>
+                    </div>
+                {{/if}}
+                <button type="button" id="start-duel-setup-btn" class="action-btn gm-btn">Finalize Rules & Begin</button>
+            {{else}}
+                <div class="spectator-notice">Waiting for GM to finalize rules...</div>
+            {{/if}}
+        {{/if}}
+
+        {{!-- PHASE 0: INITIATIVE --}}
+        {{#if (eq phase "initiative")}}
+            <h3 class="phase-title">Determine Initiative</h3>
+            {{#if isSpectator}}
+                <div class="spectator-notice">Combatants are rolling for initiative.</div>
+            {{else}}
+                {{#if hasRolledInitiative}}
+                    <div class="spectator-notice">Initiative rolled. Waiting for opponent...</div>
+                {{else}}
+                    <button type="button" id="roll-init-btn" class="action-btn" data-bonus="{{initBonus}}">
+                        <i class="fas fa-bolt"></i> Roll Initiative (+{{initBonus}})
+                    </button>
+                {{/if}}
+            {{/if}}
+        {{/if}}
+
+        {{!-- PHASE 1: APPROACH --}}
+        {{#if (eq phase "approach")}}
+            <h3 class="phase-title">The Approach</h3>
+            {{#if isSpectator}}
+                <div class="spectator-notice">Combatants are selecting their stances.</div>
+            {{else}}
+                {{#if hasSubmittedApproach}}
+                    <div class="spectator-notice">Stance locked. Waiting for opponent...</div>
+                {{else}}
+                    <div class="stance-grid">
+                        <button type="button" class="stance-btn str" data-stance="Strength"><i class="fas fa-fist-raised"></i> Strength</button>
+                        <button type="button" class="stance-btn dex" data-stance="Dexterity"><i class="fas fa-running"></i> Dexterity</button>
+                        <button type="button" class="stance-btn con" data-stance="Constitution"><i class="fas fa-shield-alt"></i> Constitution</button>
+                    </div>
+                {{/if}}
+            {{/if}}
+        {{/if}}
+
+        {{!-- PHASE 2: CLASH --}}
+        {{#if (eq phase "clash")}}
+            <h3 class="phase-title">The Clash</h3>
+            <div class="matchup-reveal">
+                {{#if isSpectator}}
+                    <span>Attacker: <strong>{{yourStance}}</strong></span> | <span>Defender: <strong>{{opponentStance}}</strong></span>
+                {{else}}
+                    <span>Your Stance: <strong>{{yourStance}}</strong></span> | <span>Opponent: <strong>{{opponentStance}}</strong></span>
+                    <div class="matchup-bonus">Matchup Modifier: <strong>+{{matchupBonus}}</strong></div>
+                {{/if}}
+            </div>
+
+            {{#if isSpectator}}
+                <div class="spectator-notice">Waiting for combatants to roll...</div>
+            {{else}}
+                {{#if hasRolled}}
+                    <div class="spectator-notice">Roll locked. Waiting for opponent...</div>
+                {{else}}
+                    <div class="roll-breakdown">
+                        Base: +{{sheetBonus}} {{#if isDefender}}<span class="penalty">| Pressure: -{{pressurePenalty}}</span>{{/if}}
+                        <div class="total-mod">Total Modifier: {{#if (gte totalRollBonus 0)}}+{{/if}}{{totalRollBonus}}</div>
+                    </div>
+
+                    {{#if hasAdvantage}}
+                        <div class="advantage-badge"><i class="fas fa-star"></i> Decisive Counter: Advantage!</div>
+                    {{/if}}
+
+                    <button type="button" id="roll-clash-btn" class="action-btn" data-total-bonus="{{totalRollBonus}}">
+                        <i class="fas fa-dice-d20"></i> Roll Clash ({{#if hasAdvantage}}2d8kh{{else}}1d8{{/if}})
+                    </button>
+                {{/if}}
+            {{/if}}
+        {{/if}}
+
+        {{!-- PHASE 3: OUTCOME --}}
+        {{#if (eq phase "outcome")}}
+            <h3 class="phase-title">Exchange Results</h3>
+            <div class="results-box">
+                {{{outcomeText}}}
+            </div>
+
+            {{#if showDamageButton}}
+                <button type="button" id="roll-damage-btn" class="action-btn danger-btn">
+                    <i class="fas fa-tint"></i> Roll Clean Strike Damage
+                </button>
+            {{/if}}
+
+            {{#if isGM}}
+                <div class="gm-controls">
+                    {{#if canAdvance}}
+                        <button type="button" id="next-exchange-btn" class="action-btn secondary-btn">Next Exchange</button>
+                    {{/if}}
+                    <button type="button" id="end-duel-btn" class="action-btn danger-btn">Terminate Duel</button>
+                </div>
+            {{else}}
+                {{#if isSpectator}}
+                    <div class="spectator-notice">Waiting for GM to advance...</div>
+                {{/if}}
+            {{/if}}
+        {{/if}}
+
+        {{!-- PHASE 4: FINISHED --}}
+        {{#if (eq phase "finished")}}
+            <div class="victory-screen">
+                <i class="fas fa-trophy victory-icon"></i>
+                <h2>Victor: {{winnerName}}</h2>
+                <p class="victory-details">{{{victoryDetails}}}</p>
+                {{#if isGM}}
+                    <button type="button" id="close-duel-final-btn" class="action-btn gm-btn">Dismiss</button>
+                {{/if}}
+            </div>
+        {{/if}}
+    </main>
+</div>
